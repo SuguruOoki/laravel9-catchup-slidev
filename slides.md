@@ -31,6 +31,22 @@ drawings:
 
 # Laravel9での把握すべきこと
 
+---
+
+## 概要
+
+1. PHP 8.0 が最低限必要
+2. Symfony6系を利用している
+3. 次のLTSとなる
+
+|   version    | release date              |
+| :----------: | :------------------------ |
+| Laravel 9.0  | 2022年1月（January 2022） |
+| Laravel 10.0 | 2023年1月（January 2023） |
+| Laravel 11.0 | 2024年1月（January 2024） |
+
+---
+
 ### 機能
 
 |                                               |                                                                                                                                 |
@@ -46,7 +62,109 @@ drawings:
 
 ---
 
+そもそもMigration自体にそれぞれ名前をつける必要があるんだっけ？という疑問から生まれた機能。
+
+[該当Issueはこちら](https://github.com/laravel/framework/issues/5899)で参考の書き方は次のとおり。
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('people', function (Blueprint $table)
+        {
+            $table->string('first_name')->nullable();
+        });
+    }
+};
+```
+
+---
+
+### Before
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class DropColumnTargetColumn extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('people', function (Blueprint $table) {
+            $table->string('first_name')->nullable();
+        });
+    }
+};
+```
+
+---
+
+### After
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('people', function (Blueprint $table)
+        {
+            $table->string('first_name')->nullable();
+        });
+    }
+};
+```
+
+---
+
 # New Query Builder Interface
+
+---
+
+クエリビルダインターフェースが提供されるようになる。これにより補完周りがかなり便利に。
+[こちら](https://github.com/laravel/framework/pull/37956) のプルリクエストにもあるように、補完が効いているときに、「Query\Builder」なのか「Eloquent\Builder」なのか「Eloquent\Relation」なのかによって補完が間違っているせいで一度エラーが出たなんて経験がある程度補完を使ったことがある人なら誰しもあるはず。そのエラーが出なくなるらしい。
+
+
+```php
+<?php
+
+return Model::query()
+	->whereNotExists(function($query) {
+		// $query is a Query\Builder
+	})
+	->whereHas('relation', function($query) {
+		// $query is an Eloquent\Builder
+	})
+	->with('relation', function($query) {
+		// $query is an Eloquent\Relation
+	});
+```
 
 ---
 
@@ -54,17 +172,49 @@ drawings:
 
 ---
 
-# Interactive
+\Illuminate\Support\Strクラスの内部での
+
+* str_contains()
+* str_starts_with()
+* str_ends_with()
+
+のphpの標準関数の利用が始まる。今までphpの標準関数に文字列の中に特定nの文字が含まれるのかなどといった関数がなかったため、Laravelでは、独自のラッパーメソッドを実装していた。今回でその独自実装でなくなり、標準関数の利用が始まる
+
+プルリクエストは [こちら](https://github.com/laravel/framework/pull/38011)
+
+```
+Since PHP 8 will be the minimum, Tom Schlick submitted a PR to move to using str_contains(), str_starts_with() and str_ends_with() functions internally in the \Illuminate\Support\Str class.
+```
 
 ---
 
 # From SwiftMailer to Symfony Mailer
 
 ---
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
+
+
+プルリクエストは[こちら](https://github.com/laravel/framework/pull/38481)
+
+SymfonyがSwiftMailerを非推奨としたため、Laravel9で、すべてのメールトランスポートにSymfonyMailerを使用するように変更された
+
+```
+Symfony deprecated SwiftMailer and Laravel 9 makes the change to use Symfony Mailer for all the mail transports. This does open up a few breaking changes and you can review the PR for all the details. The Laravel 9 upgrade guide will include instructions once it's officially released.
+```
+
+---
+
+# アップデートの鬼門
+
+---
+
+LTSにおけるアップデート(6.x -> 9.x)について
+Laravel8での変更が鬼門となりそう
+モデルファクトリが8からクラスベースの書き方に変更があった。
+しばらくは一旦ヘルパーで捌けるとはいえ、長期的なことを考えると、書き換えておいた方が良さそう
+
+---
+
+---
 
 <style>
 h1 {
