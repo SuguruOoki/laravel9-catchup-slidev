@@ -19,12 +19,19 @@ info: |
 # persist drawings in exports and build
 drawings:
   persist: false
+
+layout: intro
+logoHeader: './images/techtrain.jpg'
+website: 'https://github.com/SuguruOoki'
+handle: 'suguru_ohki'
+introImage: 'https://avatars.githubusercontent.com/u/16362021?v=4'
+
 ---
 
 # Laravel9へ！
 
 <div>
-  <h1>Laravel9がリリースされます!2021/01予定ですが、振り返りをしてみましょう。</h1>
+  <h3>Laravel9がリリースされます!2021/01予定ですが、振り返りをしてみましょう。</h3>
 </div>
 
 ---
@@ -92,14 +99,14 @@ return new class extends Migration {
 
 ### Before
 
-```php
+```php {all|7}
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DropColumnTargetColumn extends Migration
+class AddColumnFirstNameInPeopleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -115,16 +122,19 @@ class DropColumnTargetColumn extends Migration
 };
 ```
 
+<arrow v-click="4" x1="400" y1="420" x2="230" y2="240" color="#564" width="3" arrowSize="1" />
+
 ---
 
 ### After
 
-```php
+```php {all|2|7|7}
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+
 return new class extends Migration {
     /**
      * Run the migrations.
@@ -140,6 +150,8 @@ return new class extends Migration {
     }
 };
 ```
+
+<arrow v-click="4" x1="400" y1="420" x2="230" y2="240" color="#564" width="3" arrowSize="1" />
 
 ---
 
@@ -207,12 +219,84 @@ Symfony deprecated SwiftMailer and Laravel 9 makes the change to use Symfony Mai
 
 ---
 
-LTSにおけるアップデート(6.x -> 9.x)について
-Laravel8での変更が鬼門となりそう
-モデルファクトリが8からクラスベースの書き方に変更があった。
-しばらくは一旦ヘルパーで捌けるとはいえ、長期的なことを考えると、書き換えておいた方が良さそう
+## LTSにおけるアップデート(6.x -> 9.x)について
+
+1. Laravel8での変更が鬼門となりそう
+2. モデルファクトリが8からクラスベースの書き方に変更があった。
+3. しばらくは一旦ヘルパーで捌けるとはいえ、長期的なことを考えると、書き換えておいた方が良さそう
 
 ---
+
+## Before
+
+```php
+<?php
+
+/** @var \Illuminate\Database\Eloquent\Factory $factory */
+
+use App\Models\User;
+use Faker\Generator as Faker;
+use Illuminate\Support\Str;
+
+$factory->define(User::class, function (Faker $faker) {
+    return [
+        'name' => $faker->name,
+        'email' => $faker->unique()->safeEmail,
+        'email_verified_at' => now(),
+        'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+        'remember_token' => Str::random(10),
+    ];
+});
+```
+
+---
+
+## After
+
+```php
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class UserFactory extends Factory
+{
+    protected $model = User::class;
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+        ];
+    }
+}
+```
+
+
+1. HasFactoryのtraitをModelに入れる必要がある
+2. ファクトリにネームスペースが付くため、ネームスペースをcomposer.jsonに追加
+
+---
+
+## Rectorを使って乗り越えられるかもしれない。
+
+---
+
+## Rector とは
+
+https://github.com/rectorphp/rector
+
+![This is an image](images/rector.png)
+
+
+
+
+---
+
+
+
+[カオナビさんの素晴らしいアドベントカレンダー](https://zenn.dev/naopusyu/articles/cc68a0aa827bca)
+
 
 ---
 
