@@ -286,10 +286,6 @@ class UserFactory extends Factory
 
 https://github.com/rectorphp/rector
 
-![This is an image](images/rector.png)
-
-
-
 
 ---
 
