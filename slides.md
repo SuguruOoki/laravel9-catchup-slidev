@@ -324,17 +324,6 @@ protected $headers =
 
 ---
 
-1. phpstan(larastan)
-2. phpunit
-3. php-cs-fixer
-4. paratest
-5. laravel-ide-helper
-6. composer
-7. deptrac-shim
-8. phpinsights
-
----
-
 ## Rectorを使って乗り越えられるかもしれない。
 
 ---
@@ -342,8 +331,6 @@ protected $headers =
 ## Rector とは
 
 https://github.com/rectorphp/rector
-
-![This is an image](./images/rector.png)
 
 ---
 
