@@ -343,7 +343,7 @@ protected $headers =
 
 https://github.com/rectorphp/rector
 
-![This is an image](images/rector.png)
+![This is an image](./images/rector.png)
 
 ---
 
