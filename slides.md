@@ -215,6 +215,17 @@ Symfony deprecated SwiftMailer and Laravel 9 makes the change to use Symfony Mai
 
 ---
 
+# Test Coverage
+
+---
+
+
+```shell
+php artisan test --coverage
+```
+
+---
+
 # アップデートの鬼門
 
 ---
@@ -272,9 +283,55 @@ class UserFactory extends Factory
 }
 ```
 
-
 1. HasFactoryのtraitをModelに入れる必要がある
 2. ファクトリにネームスペースが付くため、ネームスペースをcomposer.jsonに追加
+
+---
+
+composer.jsonの修正
+
+```
+"fideloper/proxy"
+```
+
+こちらは削除します。
+
+---
+
+```php
+protected $headers = Request::HEADER_X_FORWARDED_ALL;
+// ↓のようにアップデートする
+protected $headers =
+        Request::HEADER_X_FORWARDED_FOR |
+        Request::HEADER_X_FORWARDED_HOST |
+        Request::HEADER_X_FORWARDED_PORT |
+        Request::HEADER_X_FORWARDED_PROTO |
+        Request::HEADER_X_FORWARDED_AWS_ELB;
+```
+
+---
+
+# 周辺ライブラリのアップデートについて(人権的なライブラリたち)
+
+---
+
+1. phpstan(larastan)
+2. phpunit
+3. php-cs-fixer
+4. paratest
+5. laravel-ide-helper
+6. composer
+
+---
+
+1. phpstan(larastan)
+2. phpunit
+3. php-cs-fixer
+4. paratest
+5. laravel-ide-helper
+6. composer
+7. deptrac-shim
+8. phpinsights
 
 ---
 
